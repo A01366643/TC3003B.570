@@ -1,0 +1,36 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#define YY_NO_UNPUT
+#define YY_NO_INPUT
+%}
+
+%%
+
+"//".*      { printf("COMMENT\n"); }
+"f"         { printf("floatdcl "); }
+"i"         { printf("intdcl "); }
+"p"         { printf("print "); }
+[a-z]       { printf("id "); }
+"="         { printf("assign "); }
+"+"         { printf("plus "); }
+[0-9]+      { printf("inum "); }
+[0-9]+\.[0-9]{1,5} { printf("fnum "); }
+[ \t]+      { /* Ignore spaces and tabs */ }
+\n          { printf("\n"); } /* Print newline for each newline in input */
+.           { printf("ERROR: Unexpected character %s\n", yytext); }
+
+%%
+
+int yywrap() { return 1; }
+
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        if (!(yyin = fopen(argv[1], "r"))) {
+            perror(argv[1]);
+            return 1;
+        }
+    }
+    yylex();
+    return 0;
+}
