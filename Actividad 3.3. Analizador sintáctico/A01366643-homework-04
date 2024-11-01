@@ -3,22 +3,23 @@
 #include <stdlib.h>
 #define YY_NO_UNPUT
 #define YY_NO_INPUT
+int line_empty = 1;  // Variable para rastrear si la línea está vacía
 %}
 
 %%
 
-"//".*      { printf("COMMENT\n"); }
-"f"         { printf("floatdcl "); }
-"i"         { printf("intdcl "); }
-"p"         { printf("print "); }
-[a-z]       { printf("id "); }
-"="         { printf("assign "); }
-"+"         { printf("plus "); }
-[0-9]+      { printf("inum "); }
-[0-9]+\.[0-9]{1,5} { printf("fnum "); }
-[ \t]+      { /* Ignore spaces and tabs */ }
-\n          { printf("\n"); } /* Print newline for each newline in input */
-.           { printf("ERROR: Unexpected character %s\n", yytext); }
+"//".*      { if (!line_empty) printf("\n"); printf("COMMENT\n"); line_empty =$
+"f"         { if (!line_empty) printf("\n"); printf("floatdcl "); line_empty =$
+"i"         { if (!line_empty) printf("\n"); printf("intdcl "); line_empty = 0$
+"p"         { if (!line_empty) printf("\n"); printf("print "); line_empty = 0;$
+[a-eg-hj-oq-z]       { printf("id "); line_empty = 0; }
+"="         { printf("assign "); line_empty = 0; }
+"+"         { printf("plus "); line_empty = 0; }
+[0-9]+      { printf("inum "); line_empty = 0; }
+[0-9]+\.[0-9]{1,5} { printf("fnum "); line_empty = 0; }
+[ \t]+      { /* Ignorar espacios y tabs */ }
+\n          { if (!line_empty) { printf("\n"); line_empty = 1; } }
+.           { printf("ERROR: Unexpected character %s\n", yytext); line_empty =$
 
 %%
 
@@ -32,5 +33,7 @@ int main(int argc, char **argv) {
         }
     }
     yylex();
+    if (!line_empty) printf("\n");  // Asegurarse de que haya un salto de líne$
     return 0;
 }
+
