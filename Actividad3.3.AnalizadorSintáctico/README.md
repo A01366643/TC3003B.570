@@ -1,6 +1,6 @@
 Luisa Fernanda Castaños Arias | A01366643
 
-# Analizador Sintáctico para Calculadora Simple
+# Analizador Sintáctico
 
 Este proyecto implementa un analizador léxico y sintáctico para una calculadora simple que maneja números enteros, flotantes y operaciones básicas.
 
